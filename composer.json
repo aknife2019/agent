@@ -2,7 +2,7 @@
     "name": "aknife/agent",
     "homepage": "https://aknife.cn",
     "description": "获取语言、操作系、浏览器、手机备的名称等",
-    "keywords": ["header", "useragent", "agent", "user agent", "浏览器", "操作系统", "手机", "手机浏览器", "browser", "platform", "mobile", "desktop"],
+    "keywords": ["header", "useragent", "agent", "user agent","php", "浏览器", "操作系统", "手机", "手机浏览器", "browser", "platform", "mobile", "desktop"],
     "type": "library",
     "license": "MIT",
     "authors": [
