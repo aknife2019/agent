@@ -15,7 +15,7 @@ class Browser
             'category'=>'app'
         ],
 
-        'MicroMessenger/([^ ]+)' => [
+        'MicroMessenger/(\d+[\.\d]+)' => [
             'name'=>'WeChat',
             'version'=>'$1',
             'category'=>'app'
@@ -267,7 +267,7 @@ class Browser
         ],
 
         // the world
-        'the world(?:[ \/]([\w.]+))?' => [
+        'the world(?:[ /]([\w.]+))?' => [
             'name'=>'the world',
             'version'=>'$1',
             'category'=>'browser'

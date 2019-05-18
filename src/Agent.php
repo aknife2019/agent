@@ -76,7 +76,7 @@ class Agent
     public static function getHeader()
     {
         $header['user_agent'] = self::$header ?: $_SERVER['HTTP_USER_AGENT'];
-        if( !$header['HTTP_ACCEPT_LANGUAGE'] ){
+        if( !isset($a['HTTP_ACCEPT_LANGUAGE']) ){
             $header['accept_language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         }
 
@@ -177,12 +177,13 @@ class Agent
     {
         $browser =  self::$browser ?: self::getBrowser();
 
-        // 分割版本号
-        $browser['full'] = $browser['version'];
-        preg_match('/(\d+.\d+).\d+.\d+|(\d+.\d+).\d+|(\d+.\d+)|(\d+.\w+)|(\d+)/i',$browser['full'],$ver);
-        $ver = array_values(array_filter($ver));
-        $browser['version'] = $ver[1];
-
+        if( isset($browser['version']) ){
+            // 分割版本号
+            $browser['full'] = $browser['version'];
+            preg_match('/(\d+.\d+).\d+.\d+|(\d+.\d+).\d+|(\d+.\d+)|(\d+.\w+)|(\d+)/i',$browser['full'],$ver);
+            $ver = array_values(array_filter($ver));
+            $browser['version'] = $ver[1];
+        }
         return $browser;
     }
 
@@ -198,7 +199,6 @@ class Agent
         $browser = self::ruleMatch(Browser::$rule,$userAgent);
         // 设置静态变量
         self::$browser = $browser;
-
         return self::resultLang('browser',$browser);
     }
 
@@ -234,8 +234,7 @@ class Agent
     public static function device()
     {
         $device =  self::$device ?: self::getDevice();
-
-        return $device['name'] == 'Unknow' ? false : $device;
+        return $device;
     }
 
     /**
@@ -261,10 +260,11 @@ class Agent
      */
     protected static function ruleMatch($rule,$string)
     {
+        $result = ['name'=>'Unknow'];
         foreach( $rule as $key=>$val ){
             if( preg_match("/".str_replace('/','\/',$key)."/i",$string,$arr) ){
                 // 判断设备的时候，判断是否有子规则
-                if( $val['sub'] ){
+                if( isset($val['sub']) ){
                     foreach( $val['sub'] as $sub_key=>$sub_val ){
                         if( preg_match("/".str_replace('/','\/',$sub_key)."/i",$string,$sub_arr) ){
                             if( preg_match('/\$(\d+)/',$sub_val['name'],$regexNums) ){
@@ -284,14 +284,14 @@ class Agent
                     if( $val['version'] ){
                         $result['version'] = trim(strpos($val['version'],"$") !== false ? $arr[str_replace('$','',$val['version'])] : $val['version']);
                     }
-                    if( $val['category'] ){
+                    if( isset($val['category']) ){
                         $result['type'] = trim(strpos($val['category'],"$") !== false ? $arr[str_replace('$','',$val['category'])] : $val['category']);
                     }
                 }
                 break;
             }
         }
-        return $result ?: ['name' => 'Unknow'];
+        return $result;
     }
 
     /**

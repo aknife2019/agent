@@ -13559,24 +13559,6 @@ class Device
             ]
         ],
 
-        // Wolder
-        'miSmart|miTab|WIAM \//24'   =>  [
-            'name'=>'Wolder',
-            'category'=>'smartphone',
-            'sub'=>[
-                'WIAM \//24'=>[
-                    'name'=>'Wiam //24',
-                ],
-                'miSmart[ \-_]?([^/]+) Build'=>[
-                    'name'=>'miSmart $1',
-                ],
-                'miTab[ \-_]?([^/]+) Build'=>[
-                    'name'=>'miTab $1',
-                    'category'=>'tablet',
-                ],
-            ]
-        ],
-
         // Wolfgang
         'AT[ _-]AS([0-9A-Z]+)[);/ ]'   =>  [
             'name'=>'Wolfgang',
