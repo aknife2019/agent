@@ -77,13 +77,7 @@ Get Browser Name. (Chrome / IE / Edge / Safari / Firefox / HuaWei Browser / Xiao
 获取浏览器的名称. (谷歌浏览器 / IE 浏览器 / Edge 浏览器 / 苹果浏览器 / 火狐浏览器 / 华为浏览器 / 小米浏览器 / QQ内置浏览器 / 微信内置浏览器 / QQ浏览器 / ...)
 
 ```php
-$browserArray = Agent::browser(); // [ 'name'=>'Chrome','version'=>'74.0','full'=>'74.0.3729.131' ]
-$browser = $browserFull[0].' '.$browserFull[1]; // Chrome 74.0
-$browserFull = $browserFull[0].' '.$browserFull[2]; // Chrome 74.0.3729.131
-
-$browserArray = Agent::browser(0); // Chrome
-$browserArray = Agent::browser(1); // 74.0
-$browserArray = Agent::browser(2); // 74.0.3729.131
+$browser = Agent::browser(); // [ 'name'=>'Chrome','version'=>'74.0','full'=>'74.0.3729.131' ]
 
 ```
 
