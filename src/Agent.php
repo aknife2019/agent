@@ -77,7 +77,7 @@ class Agent
     {
         $header['user_agent'] = self::$header ?: $_SERVER['HTTP_USER_AGENT'];
         if( !isset($header['HTTP_ACCEPT_LANGUAGE']) ){
-            $header['accept_language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            $header['accept_language'] = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
         }
 
         return $header;
@@ -305,10 +305,10 @@ class Agent
             if( is_array($arg) ){
                 $result = $arg;
                 foreach( $arg as $key=>$val ){
-                    $result[$key] = self::$lang[$type][$arg[$key]] ?: $arg[$key];
+                    $result[$key] = isset(self::$lang[$type][$arg[$key]]) ? self::$lang[$type][$arg[$key]] : $arg[$key];
                 }
             }else{
-                $result = self::$lang[$type][$arg] ?: $arg;
+                $result = isset(self::$lang[$type][$arg]) ? self::$lang[$type][$arg] : $arg;
             }
             
             return $result;
