@@ -76,7 +76,7 @@ class Agent
     public static function getHeader()
     {
         $header['user_agent'] = self::$header ?: $_SERVER['HTTP_USER_AGENT'];
-        if( !isset($a['HTTP_ACCEPT_LANGUAGE']) ){
+        if( !isset($header['HTTP_ACCEPT_LANGUAGE']) ){
             $header['accept_language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         }
 
