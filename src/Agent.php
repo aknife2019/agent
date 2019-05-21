@@ -275,7 +275,7 @@ class Agent
 
                             $result['name'] = trim($result['name']);
                             $result['brand'] = trim($val['name']);
-                            $result['type'] = trim($sub_val['category'] ?: $val['category']);
+                            $result['type'] = trim(isset($sub_val['category']) ? $sub_val['category'] : $val['category']);
                             break;
                         }
                     }
