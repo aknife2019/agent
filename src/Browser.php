@@ -182,6 +182,11 @@ class Browser
             'version'=>'$1',
             'category'=>'browser'
         ],
+        'MQBHD/(\d+[.\d]+)' => [
+            'name'=>'QQ Browser',
+            'version'=>'$1',
+            'category'=>'browser'
+        ],
 
         // MIUI Browser
         'MIUIBrowser(?:/(\d+[.\d]+))?' => [
@@ -556,13 +561,13 @@ class Browser
 
         '(BonEcho|GranParadiso|Lorentz|Minefield|Namoroka|Shiretoko)/(\d+[.\d]+)' => [
             'name'=>'Firefox',
-            'version'=>'$1 ($2)',
+            'version'=>'$2',
             'category'=>'browser'
         ],
 
         'FxiOS/(\d+[.\d]+)' => [
             'name'=>'Firefox Mobile',
-            'version'=>'iOS $1',
+            'version'=>'$1',
             'category'=>'browser'
         ],
 

@@ -507,12 +507,6 @@ class Platform
             'version'=>''
         ],
 
-        // Firefox OS - 已淘汰
-        '(?:Mobile|Tablet);.+Firefox/\d+\.\d+' => [
-            'name'=>'Firefox OS',
-            'version'=>''
-        ],
-
         // RISC OS
         'RISC OS(?:-NC)?(?:[ /](\d+[\.\d]+))?' => [
             'name'=>'RISC OS',

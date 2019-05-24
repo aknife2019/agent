@@ -182,7 +182,7 @@ class Agent
             $browser['full'] = $browser['version'];
             preg_match('/(\d+.\d+).\d+.\d+|(\d+.\d+).\d+|(\d+.\d+)|(\d+.\w+)|(\d+)/i',$browser['full'],$ver);
             $ver = array_values(array_filter($ver));
-            $browser['version'] = $ver[1];
+        $browser['version'] = isset($ver[1]) ? $ver[1] : '';
         }
         return $browser;
     }
@@ -268,6 +268,9 @@ class Agent
                     foreach( $val['sub'] as $sub_key=>$sub_val ){
                         if( preg_match("/".str_replace('/','\/',$sub_key)."/i",$string,$sub_arr) ){
                             if( preg_match('/\$(\d+)/',$sub_val['name'],$regexNums) ){
+                                if( !isset($sub_arr[1]) ){
+                                    $sub_arr[1] = $sub_arr[0];
+                                }
                                 $result['name'] = str_replace('$'.$regexNums[1],$sub_arr[$regexNums[1]] ?: '',$sub_val['name']) ?: $sub_val['name'];
                             }else{
                                 $result['name'] = strpos($sub_val['name'],"$") !== false ? $sub_arr[str_replace('$','',$sub_val['name'])] : $sub_val['name'];
@@ -280,8 +283,15 @@ class Agent
                         }
                     }
                 }else{
+                    $arr[1] = isset($arr[1]) ? $arr[1] : '';
+                    $arr[2] = isset($arr[2]) ? $arr[2] : '';
+                    $arr[3] = isset($arr[3]) ? $arr[3] : '';
+
                     $result['name'] = strpos($val['name'],"$") !== false ? $arr[str_replace('$','',$val['name'])] : $val['name'];
-                    if( $val['version'] ){
+                    if( isset($val['version']) ){
+                        $a = str_replace('$','',$val['version']);
+                        echo $a;
+                        echo $arr[$a];
                         $result['version'] = trim(strpos($val['version'],"$") !== false ? $arr[str_replace('$','',$val['version'])] : $val['version']);
                     }
                     if( isset($val['category']) ){
