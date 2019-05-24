@@ -283,16 +283,18 @@ class Agent
                         }
                     }
                 }else{
-                    $arr[1] = isset($arr[1]) ? $arr[1] : '';
-                    $arr[2] = isset($arr[2]) ? $arr[2] : '';
-                    $arr[3] = isset($arr[3]) ? $arr[3] : '';
-
                     $result['name'] = strpos($val['name'],"$") !== false ? $arr[str_replace('$','',$val['name'])] : $val['name'];
                     if( isset($val['version']) ){
-                        $a = str_replace('$','',$val['version']);
-                        echo $a;
-                        echo $arr[$a];
-                        $result['version'] = trim(strpos($val['version'],"$") !== false ? $arr[str_replace('$','',$val['version'])] : $val['version']);
+                        if( preg_match("/".str_replace('/','\/',$key)."/i",$string,$sub_arr) ){
+                            if( preg_match('/\$(\d+)/',$val['version'],$regexNums) ){
+                                if( !isset($sub_arr[1]) ){
+                                    $sub_arr[1] = $sub_arr[0];
+                                }
+                                $result['version'] = str_replace('$'.$regexNums[1],$sub_arr[$regexNums[1]] ?: '',$val['version']) ?: $val['version'];
+                            }else{
+                                $result['version'] = strpos($val['version'],"$") !== false ? $sub_arr[str_replace('$','',$val['version'])] : $val['version'];
+                            }
+                        }
                     }
                     if( isset($val['category']) ){
                         $result['type'] = trim(strpos($val['category'],"$") !== false ? $arr[str_replace('$','',$val['category'])] : $val['category']);

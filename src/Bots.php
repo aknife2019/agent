@@ -65,6 +65,11 @@ class Bots
             'category'=>'Search bot',
         ],
 
+        'DotBot'   =>  [
+            'name'=>'DotBot',
+            'category'=>'Search bot'
+        ],
+
         // 常见的Web爬虫
         '(curl|Wget|python-requests|Python-urllib|Java|Guzzle|perlclient|libwww-perl|okhttp|HTTP_Request2|Mechanize|aiohttp|Google-HTTP-Java-Client|WWW-Mechanize|Faraday|Go-http-client|urlgrabber|libdnf|HTTPie)' => [
             'name'=>'$1',
