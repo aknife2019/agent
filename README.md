@@ -1,5 +1,5 @@
 项目中的实际应用
- ![image](https://github.com/aknife2019/agent/master/screen.jpg)
+ ![image](https://github.com/aknife2019/agent/raw/master/screen.jpg)
 
 Agent
 =====
