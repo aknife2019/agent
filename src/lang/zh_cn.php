@@ -1,5 +1,10 @@
 <?php
+// 不完整,只有部分常用可翻译数据，比如 Oppo 就没翻译的必要
 $lang = [
+    'base' => [
+        'true'                  =>  '真',
+        'false'                  =>  '假',
+    ],
     'platform'=>[
         // 桌面操作系统
         'Windows'               =>  'Windows',
@@ -63,27 +68,33 @@ $lang = [
 
     'bots'=>[
         // 分类
-        'Search bot'            =>  '蜘蛛程序',
+        'Search Bot'            =>  '蜘蛛程序',
         'Web Crawler'           =>  'Web爬虫',
+        'Site Monitor'          =>  '网站监控',
+        'Social Media Agent'    =>  '社交媒体',
+        'Security Checker'      =>  '安全检测',
+        'Service Agent'         =>  '服务代理',
+        'Feed Fetcher'          =>  'Feed订阅',
+        'Generic Bot'           =>  '通用Bot',
+        'development'           =>  '开发工具',
 
         // 列表
-        'Baidu Spider'          =>  '百度蜘蛛',
-        'Sogou Spider'          =>  '搜狗蜘蛛',
-        '360 Spider'            =>  '360蜘蛛',
-        'Yisou Spider'          =>  '神马蜘蛛',
-        'Googlebot'             =>  '谷歌蜘蛛',
-        'Yahoo! Slurp'          =>  '雅虎蜘蛛',
-        'BingBot'               =>  '微软蜘蛛',
-        'DuckDuckGo Bot'        =>  'DuckDuckGo蜘蛛',
-        'Yandex Bot'            =>  'Yandex蜘蛛',
-        'Ask Bot'               =>  'Ask蜘蛛',
-
+        'Baidu Spider'          =>  '百度搜索',
+        'Sogou Spider'          =>  '搜狗搜索',
+        '360 Spider'            =>  '360 搜索',
+        'YisouSpider'           =>  '神马搜索',
+        'PetalBot'              =>  '花瓣搜索',
+        'Bytespider'            =>  '头条搜索',
+        'Googlebot'             =>  '谷歌搜索',
+        'BingBot'               =>  '必应搜索',
+        'DuckDuckGo Bot'        =>  'DuckDuckGo搜索',
+        'Yandex Bot'            =>  'Yandex搜索'
     ],
 
     'browser'=>[
         // 分类
-        'app'                   =>  '手机App',
-        'browser'               =>  '浏览器',
+        'App'                   =>  '手机App',
+        'Browser'               =>  '浏览器',
 
         // App 列表
         'WeChat App'            =>  '微信小程序',
@@ -93,7 +104,6 @@ $lang = [
         'Baidu'                 =>  '手机百度',
         'TikTok'                =>  '抖音',
         'Sina Weibo'            =>  '新浪微博',
-        'Sogou Search'          =>  '搜狗无搜索',
         'Facebook Messenger'    =>  'Facebook Messenger',
         'Facebook'              =>  'Facebook',
         'Pinterest'             =>  'Pinterest',
@@ -138,16 +148,21 @@ $lang = [
 
     'device'=>[
         // 分类
-        'smartphone'            =>  '手机',
+        'smartphone'            =>  '智能手机',
+        'feature phone'         =>  '功能手机',
         'tablet'                =>  '平板',
         'tv'                    =>  '电视',
-
+        'desktop'               =>  'desktop',
+        'phablet'               =>  '平板手机',
+        'wearable'              =>  '可穿戴设备',
+        'portable media player' =>  '便携媒体播放器',
+        
         // 手机品牌
+        'Apple'                 =>  '苹果',
         'Huawei'                =>  '华为',
         'Xiaomi'                =>  '小米',
         'Meizu'                 =>  '魅族',
-        'Xiaomi'                =>  '小米',
-        'Xiaomi'                =>  '小米',
+        'Samsung'               =>  '三星',
     ],
 
     'language'=>[

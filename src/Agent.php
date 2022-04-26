@@ -1,10 +1,12 @@
 <?php
 namespace Aknife\Agent;
 
-use Aknife\Agent\Platform;
-use Aknife\Agent\Browser;
-use Aknife\Agent\Bots;
-use Aknife\Agent\Device;
+use Aknife\Ip\IpLocation;
+
+use Aknife\Agent\Rules\Platform;
+use Aknife\Agent\Rules\Browser;
+use Aknife\Agent\Rules\Bots;
+use Aknife\Agent\Rules\Device;
 
 class Agent
 {
@@ -12,37 +14,19 @@ class Agent
      * 设置默认语言
      * @var string
      */
-    protected static $lang = null;
+    private static $lang = 'zh_cn';
 
-     /**
+    /**
      * 设置header
      * @var string
      */
-    protected static $header = null;
+    private static $userAgent = null;
 
     /**
-     * 设置platform
+     * 设置 ip
      * @var string
      */
-    protected static $platform = null;
-
-    /**
-     * 设置browser
-     * @var string
-     */
-    protected static $browser = null;
-
-    /**
-     * 设置bots
-     * @var string
-     */
-    protected static $bots = null;
-
-    /**
-     * 设置device
-     * @var string
-     */
-    protected static $device = null;
+    private static $ip = null;
 
     /**
      * 设置返回的语言
@@ -53,71 +37,42 @@ class Agent
 
         // 判断语言文件
         if( is_file($langPath) ){
-            require_once $langPath;
             self::$lang = $lang;
         }
     }
 
     /**
-     * 设置自定义的header
+     * 设置 user agent
+     * @var array
      */
-    public static function header($header)
+    public static function setUserAgent($userAgent,$ip=false)
     {
-        self::$header = $header;
-        self::$platform = null;
-        self::$browser = null;
-        self::$device = null;
+        self::$userAgent = trim($userAgent);
+    }
+
+    /**
+     * 设置 IP
+     * @var array
+     */
+    public static function setIp($ip)
+    {
+        self::$ip = trim($ip);
     }
 
     /**
      * 获取header信息
      * @var array
      */
-    public static function getHeader()
+    public static function getUserAgent()
     {
-        $header['user_agent'] = self::$header ?: $_SERVER['HTTP_USER_AGENT'];
-        if( !isset($header['HTTP_ACCEPT_LANGUAGE']) ){
-            $header['accept_language'] = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
+        if( self::$userAgent ){
+            $userAgent = self::$userAgent;
+        }else{
+            $userAgent = $_SERVER['HTTP_USER_AGENT'];
+            self::$userAgent = $userAgent;
         }
 
-        return $header;
-    }
-
-    /**
-     * 判断状态
-     * @var boolean
-     */
-    public static function is($type)
-    {
-        // 判断机器人
-        if( $type == 'bots' ){
-            $bots = self::bots();
-            if( $bots['name'] != 'Unknow' ){
-                return true;
-            }else{
-                return false;
-            }
-        }
-
-        // 获取操作系统
-        $platform = self::platform();
-        if( strpos($platform['name'].$platform['version'], $type) !== false ){
-            return true;
-        }
-
-        // 获取浏览器
-        $browser = self::browser();
-        if( strpos($browser['name'].$browser['version'], $type) !== false ){
-            return true;
-        }
-
-        // 获取设备名
-        $device = self::device();
-        if( strpos($device['name'], $type) !== false || strpos($device['brand'], $type) !== false  ){
-            return true;
-        }
-
-        return false;
+        return $userAgent;
     }
 
     /**
@@ -126,9 +81,28 @@ class Agent
     public static function all()
     {
         $result['language'] = self::language();
+        $result['ip'] = self::ip();
         $result['platform'] = self::platform();
         $result['browser'] = self::browser();
         $result['device'] = self::device();
+        $result['bots'] = self::bots();
+        $result['userAgent'] = self::getUserAgent();
+        
+        return $result;
+    }
+
+    /**
+     * 获取ip信息
+     */
+    public static function ip( $ipAddress = '')
+    {
+        if( $ipAddress == '' ){
+            $ip = self::$ip ?: $_SERVER['REMOTE_ADDR'];
+            self::$ip = $ip;
+        }else{
+            $ip = $ipAddress;
+        }
+        $result = IpLocation::find($ip);
 
         return $result;
     }
@@ -138,9 +112,9 @@ class Agent
      */
     public static function language()
     {
-        $header = self::getHeader();
-        $accept_language = $header['accept_language'];
+        $accept_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         $language = explode(',',$accept_language);
+
         return self::resultLang('language',$language[0]);
     }
 
@@ -149,25 +123,16 @@ class Agent
      */
     public static function platform()
     {
-        $platform = self::$platform ?: self::getPlatform();
+        $userAgent = self::getUserAgent();
 
-        return $platform;
-    }
+        $platform = self::ruleMatch('platform',$userAgent);
+        
+        // 判断Windows10 与 Windows11
+        if( $platform['name'] == 'Windows' && $platform['version'] == '10' && isset($_SERVER['HTTP_SEC_CH_UA_PLATFORM_VERSION']) && strstr(str_replace('"','',$_SERVER['HTTP_SEC_CH_UA_PLATFORM_VERSION']),'.',true) >= 13 ){
+            $platform['version'] = '11';
+        }
 
-    /**
-     * 判断操作系统
-     */
-    protected static function getPlatform()
-    {
-        $header = self::getHeader();
-        $userAgent = $header['user_agent'];
-
-        $platform = self::ruleMatch(Platform::$rule,$userAgent);
-
-        // 设置静态变量
-        self::$platform = $platform;
-
-        return self::resultLang('platform',$platform);
+        return $platform['name'] == 'Unknow' ? null : self::resultLang('platform',$platform);
     }
 
     /**
@@ -175,134 +140,211 @@ class Agent
      */
     public static function browser()
     {
-        $browser =  self::$browser ?: self::getBrowser();
+        $userAgent = self::getUserAgent();
+
+        // 获取设备信息
+        $browser = self::ruleMatch('browser',$userAgent);
 
         if( isset($browser['version']) ){
             // 分割版本号
             $browser['full'] = $browser['version'];
             preg_match('/(\d+.\d+).\d+.\d+|(\d+.\d+).\d+|(\d+.\d+)|(\d+.\w+)|(\d+)/i',$browser['full'],$ver);
             $ver = array_values(array_filter($ver));
-        $browser['version'] = isset($ver[1]) ? $ver[1] : '';
+
+            $browser['version'] = isset($ver[1]) ? $ver[1] : '';
         }
-        return $browser;
+
+        return $browser['name'] == 'Unknow' ? null : self::resultLang('browser',$browser);
+
     }
-
-    /**
-     * 判断浏览器
-     */
-    protected static function getBrowser()
-    {
-        $header = self::getHeader();
-        $userAgent = $header['user_agent'];
-
-        // 获取设备信息
-        $browser = self::ruleMatch(Browser::$rule,$userAgent);
-        // 设置静态变量
-        self::$browser = $browser;
-        return self::resultLang('browser',$browser);
-    }
-
-    /**
-     * 获取机器人/蜘蛛
-     */
-    public static function bots()
-    {
-        $bots = self::$bots ?: self::getBots();
-
-        return $bots['name'] == 'Unknow' ? false : $bots ;
-    }
-
-    /**
-     * 判断浏览器
-     */
-    protected static function getBots()
-    {
-        $header = self::getHeader();
-        $userAgent = $header['user_agent'];
-
-        // 获取设备信息
-        $bots = self::ruleMatch(Bots::$rule,$userAgent);
-        // 设置静态变量
-        self::$bots = $bots;
-
-        return self::resultLang('bots',$bots);
-    }
-
+    
     /**
      * 获取设备
      */
     public static function device()
     {
-        $device =  self::$device ?: self::getDevice();
-        return $device;
+        $userAgent = self::getUserAgent();
+
+        // 获取设备信息
+        $device = self::ruleMatch('device',$userAgent);
+
+        if( $device['name'] != 'Unknow' && $device['version'] != 'Unknow' ){
+            $result = [
+                'model' =>  $device['name'] ?: $device['version'],
+                'brand' =>  $device['brand'],
+                'category'  =>  $device['category']
+            ];
+            return self::resultLang('device',$result);
+        }else{
+            return null;
+        }
+    }
+    
+    /**
+     * 获取机器人/蜘蛛
+     * nslookup 
+     */
+    public static function bots()
+    {
+        $userAgent = self::getUserAgent();
+
+        // 获取设备信息
+        $bots = self::ruleMatch('bots',$userAgent);
+
+        // 如果是搜索蜘蛛，判断真假
+        if( $bots['category'] == 'Search Bot' ){
+            $checkResult = self::isSpider($bots['checkMethod'],$bots['rule']) ? 'true' : 'false';
+            $bots['checked'] = self::resultLang('base',$checkResult);
+
+        }
+        
+        unset($bots['checkMethod']);
+        unset($bots['rule']);
+
+        return $bots['name'] == 'Unknow' ? null : self::resultLang('bots',$bots);
     }
 
     /**
-     * 判断设备
+     * 判断是否搜索蜘蛛
+     * 需要 nslookup 
+     * @var boolean
      */
-    protected static function getDevice()
+    private static function isSpider($method,$rule)
     {
-        $header = self::getHeader();
-        $userAgent = $header['user_agent'];
+        $ip = self::$ip;
 
-        // 获取设备信息
-        $device = self::ruleMatch(Device::$rule,$userAgent);
+        $domain = htmlentities($ip, ENT_QUOTES | ENT_IGNORE, "UTF-8");
+        $rbl = 'in-addr.arpa';
+        $rev = array_reverse(explode('.', $domain));
+        $lookup = implode('.', $rev) . '.' . $rbl;
 
-        // 设置静态变量
-        self::$device = $device;
+        if( $method == 'domain' ){
+            // 校验域名
+            $dns = dns_get_record($lookup);
+            if( strpos($dns[0]['target'],$rule) === true ){
+                return true;
+            }
+        }else{
+            // IP校验
+            if( is_array($rule) ){
+                foreach( $rule as $val ){
+                    $result = self::checkIpAddr($ip,$val);
 
-        return self::resultLang('device',$device);
+                    if( $result ){
+                        return true;
+                    }
+                }
+                return false;
+            }else{
+                if( preg_match("/{$ip}/",$rule) ){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+        
+
+        return $dns;
     }
+
+    // 解析IP段
+    public static function checkIpAddr($ip,$ipAddr) {
+        $arr = explode('/',$ipAddr);//对IP段进行解剖
+        $ip_addr = $arr[0];//得到IP地址
+        $netbits = intval($arr[1]);//得到掩码位
+        $subnet_mask = long2ip(ip2long("255.255.255.255") << (32 - $netbits));
+        $ip_lang = ip2long($ip_addr);
+        $nm = ip2long($subnet_mask);
+        $nw = ($ip_lang & $nm);
+        $bc = $nw | (~$nm);
+
+        $ips['ip_start'] = long2ip($nw + 1);//可用IP开始
+        $ips['ip_end'] = long2ip($bc - 1);//可用IP结束
+
+        if($bc <= 0) $bc += 4294967296;//修复32位服务器和64位服务的差别
+        if($nw <= 0) $nw += 4294967296;//32位long2ip后会出现负数
+
+        return ip2long($ip) >= $nw+1 && ip2long($ip) <= $bc-1 ? true : false;
+    }
+
+
 
     /**
      * 正则匹配
      * @var string
      */
-    protected static function ruleMatch($rule,$string)
+    private static function ruleMatch($type,$string)
     {
+
+        switch( $type ){
+            case 'platform':
+                $rule = Platform::$rule;
+                break;
+            case 'browser':
+                $rule = Browser::$rule;
+                break;
+            case 'device':
+                $rule = Device::$rule;
+                break;
+            case 'bots':
+                $rule = Bots::$rule;
+                break;
+        }
+
         $result = ['name'=>'Unknow'];
+
         foreach( $rule as $key=>$val ){
             if( preg_match("/".str_replace('/','\/',$key)."/i",$string,$arr) ){
-                // 判断设备的时候，判断是否有子规则
+                // 判断是否有子规则
                 if( isset($val['sub']) ){
                     foreach( $val['sub'] as $sub_key=>$sub_val ){
                         if( preg_match("/".str_replace('/','\/',$sub_key)."/i",$string,$sub_arr) ){
-                            if( preg_match('/\$(\d+)/',$sub_val['name'],$regexNums) ){
-                                if( !isset($sub_arr[1]) ){
-                                    $sub_arr[1] = $sub_arr[0];
+                            foreach( $sub_val as $keyName=>$valName ){
+                                if( strpos($valName,'$') !== false ){
+                                    if( preg_match('/\$(\d+)/',$sub_val[$keyName],$regexNums) && isset($sub_arr[1]) ){
+                                        $result[$keyName] = str_replace('$'.$regexNums[1],$sub_arr[$regexNums[1]] ?: '',$sub_val[$keyName]) ?: $sub_val[$keyName];
+                                    }else{
+                                        $result[$keyName] = trim(preg_replace('/\$\d+/','',$sub_val[$keyName]));
+                                    }
+                                }else{
+                                    $result[$keyName] = $sub_val[$keyName];
                                 }
-                                $result['name'] = str_replace('$'.$regexNums[1],$sub_arr[$regexNums[1]] ?: '',$sub_val['name']) ?: $sub_val['name'];
-                            }else{
-                                $result['name'] = strpos($sub_val['name'],"$") !== false ? $sub_arr[str_replace('$','',$sub_val['name'])] : $sub_val['name'];
                             }
 
-                            $result['name'] = trim($result['name']);
-                            $result['brand'] = trim($val['name']);
-                            $result['type'] = trim(isset($sub_val['category']) ? $sub_val['category'] : $val['category']);
+                            if( $type == 'device' ){
+                                $result['name'] = trim($result['name']);
+                                $result['brand'] = $sub_val['brand'] ?: trim($val['brand']);
+                                $result['category'] = $sub_val['category'] ?: $val['category'];
+                            }
+
                             break;
                         }
                     }
                 }else{
+                    $result = $val;
                     $result['name'] = strpos($val['name'],"$") !== false ? $arr[str_replace('$','',$val['name'])] : $val['name'];
-                    if( isset($val['version']) ){
-                        if( preg_match("/".str_replace('/','\/',$key)."/i",$string,$sub_arr) ){
-                            if( preg_match('/\$(\d+)/',$val['version'],$regexNums) ){
-                                if( !isset($sub_arr[1]) ){
-                                    $sub_arr[1] = $sub_arr[0];
+
+                    if( preg_match("/".str_replace('/','\/',$key)."/i",$string,$sub_arr) ){
+                        foreach( $val as $keyName=>$valName ){
+                            if( strpos($valName,'$') !== false ){
+                                if( preg_match('/\$(\d+)/',$val[$keyName],$regexNums) && isset($sub_arr[1]) ){
+                                    $result[$keyName] = str_replace('$'.$regexNums[1],$sub_arr[$regexNums[1]] ?: '',$val[$keyName]) ?: $val[$keyName];
+                                }else{
+                                    $result[$keyName] = trim(preg_replace('/\$\d+/','',$val[$keyName]));
                                 }
-                                $result['version'] = str_replace('$'.$regexNums[1],$sub_arr[$regexNums[1]] ?: '',$val['version']) ?: $val['version'];
                             }else{
-                                $result['version'] = strpos($val['version'],"$") !== false ? $sub_arr[str_replace('$','',$val['version'])] : $val['version'];
+                                $result[$keyName] = $val[$keyName];
                             }
                         }
-                    }
-                    if( isset($val['category']) ){
-                        $result['type'] = trim(strpos($val['category'],"$") !== false ? $arr[str_replace('$','',$val['category'])] : $val['category']);
                     }
                 }
                 break;
             }
         }
+
+        $result['version'] && $result['version'] = str_replace(['_','-'],'.',$result['version']);
+
         return $result;
     }
 
@@ -310,19 +352,22 @@ class Agent
      * 返回对应的语言
      * @var string
      */
-    protected static function resultLang($type,$arg)
+    private static function resultLang($type,$arg)
     {
-        if( self::$lang ){
+        $langPath = __DIR__."/lang/".self::$lang.'.php';
+
+        // 判断语言文件
+        if( is_file($langPath) ){
+            require $langPath;
 
             if( is_array($arg) ){
                 $result = $arg;
                 foreach( $arg as $key=>$val ){
-                    $result[$key] = isset(self::$lang[$type][$arg[$key]]) ? self::$lang[$type][$arg[$key]] : $arg[$key];
+                    $result[$key] = isset($lang[$type][$val]) ? $lang[$type][$val] : $val;
                 }
             }else{
-                $result = isset(self::$lang[$type][$arg]) ? self::$lang[$type][$arg] : $arg;
+                $result = isset($lang[$type][$arg]) ? $lang[$type][$arg] : $arg;
             }
-            
             return $result;
         }else{
             return $arg;

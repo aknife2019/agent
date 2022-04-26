@@ -1,8 +1,8 @@
 {
     "name": "aknife/agent",
     "homepage": "https://aknife.cn",
-    "description": "获取语言、操作系、浏览器、手机备的名称等",
-    "keywords": ["header", "useragent", "agent", "user agent","php", "浏览器", "操作系统", "手机", "手机浏览器", "browser", "platform", "mobile", "desktop"],
+    "description": "获取IP、语言、操作系、浏览器、手机备的名称等",
+    "keywords": ["useragent","iplocation","浏览器标识"],
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,7 +13,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.6"
+        "php": ">=5.6",
+        "aknife/ip":"*"
     },
     "autoload": {
         "psr-4": {

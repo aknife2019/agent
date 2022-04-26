@@ -1,6 +1,3 @@
-项目中的实际应用
- ![image](https://github.com/aknife2019/agent/raw/master/screen.jpg)
-
 Agent
 =====
 之前使用的 jenssegers/agent 包
@@ -26,43 +23,34 @@ use Aknife\Agent\Agent;
 ------------------------
 
 ### 设置返回的语言
-如果未设置，默认调用英文
-
+如果未设置，默认调用中文
+```php
 Agent::lang('en'); // zh_cn / zh_tw / en
 
+```
 
 ### 解析特定的 header
 
-Agent::header('Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_3 like Mac OS X; zh-CN) AppleWebKit/537.51.1 (KHTML, like Gecko) Mobile/14G60 UCBrowser/11.7.7.1031 Mobile  AliApp(TUnionSDK/0.1.20)');
-
-
-### 验证操作系统 / 手机 / 平板 / 浏览器
-
 ```php
-Agnet::is("Windows"); // return true/false;
-
-// 以首字母大写的驼峰写法表示 iPhone和iPad由于有固定写法，排除在外
-// Windows / Windows XP / Windows 7 / Windows 8 / Windows 10 / Mac / FreeBSD / Linux
-// 
-// bots 
-//
-// Mobile
-// Andorid / XiaoMi / HuaWei / Oppo / Nexus / ......
-// iPhone 
-// 
-// Tablet / iPad / XiaoMiPad / ......
-// 
-// IE / IE6 / IE7 / IE8 / IE9 / IE10 / IE11 / Edge / Chrome / Firefox / Safari
+Agent::setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_3 like Mac OS X; zh-CN) AppleWebKit/537.51.1 (KHTML, like Gecko) Mobile/14G60 UCBrowser/11.7.7.1031 Mobile AliApp(TUnionSDK/0.1.20)');
 ```
 
-------------------------
-
-### 浏览器的语言
-zh-cn / zh-tw / en-us
-中文(简体) / 中文(繁体) / 英语(美国)
+### 解析特定的 IP
 
 ```php
-Agent::languages(); // return "zh-cn/zh-tw/en-us";
+Agent::setIp('8.8.8.8');
+
+Agent::ip(); // ['ip' => '182.240.131.220','country' => '中国','province' => '云南省','city' => '玉溪市','isp' => '中国电信']
+
+Agent::ip('8.8.8.8'); // ['ip' => '8.8.8.8','country' => '美国','province' => '','city' => '','isp' => '加利福尼亚州圣克拉拉县山景市谷歌公司DNS服务器']
+Agent::ip('159.75.190.197'); // ['ip' => '159.75.190.197','country' => '中国','province' => '广东省','city' => '广州市','isp' => '腾讯云']
+Agent::ip('2402:4e00:40:40::2:331');// ['ip' => '2402:4e00:40:40::2:331','country' => '中国','province' => '广东省','city' => '深圳市','isp' => '深圳市腾讯计算机系统有限公司']
+```
+
+### 浏览器的语言
+
+```php
+Agent::languages(); // return "zh-CN/zh-TW/en-US";
 ```
 
 ### 操作系统
@@ -75,8 +63,6 @@ Agent::platform();  //  ['name'=>'Windows','version'=>'10']
 
 ### 浏览器名称
 
-Get Browser Name. (Chrome / IE / Edge / Safari / Firefox / HuaWei Browser / XiaoMi Browser / QQ Own Browser / WeChat Own Browser / QQ Browser / ...)
-
 获取浏览器的名称. (谷歌浏览器 / IE 浏览器 / Edge 浏览器 / 苹果浏览器 / 火狐浏览器 / 华为浏览器 / 小米浏览器 / QQ内置浏览器 / 微信内置浏览器 / QQ浏览器 / ...)
 
 ```php
@@ -86,19 +72,18 @@ $browser = Agent::browser(); // [ 'name'=>'Chrome','version'=>'74.0','full'=>'74
 
 ### 设备名称
 
-获取设备名称，只针对手机 (HuaWei Pro 20 / XiaoMi 3 / Oppo P20 / iPhone 7/ ...)
+获取设备名称
 
 ```php
-Agent::device();    //  ['brand'=>'Huawei','name'=>'honor V10','type'=>'smartphone']
+Agent::device();    //  ['model'=>'honor V10','brand'=>'Huawei','category'=>'smartphone']
 ```
 
 ### 机器人名称
 
-get boot name. (Baiduspider / Curl / Python / Java ...)
-获取机器人名称. (百度蜘蛛 / Curl / Python / Java ...)
+获取机器人名称. (百度蜘蛛 / Curl / Python / Java ...),如果存在验证规则，则判断蜘蛛真假
 
 ```php
-Agent::robot(); // ['name'=>'Baidu Spider','type'=>'Search bot']
+Agent::robot(); // ['name'=>'Baidu Spider','category'=>'Search bot','checked'=>'false']
 ```
 
 
