@@ -45,7 +45,7 @@ class Agent
      * 设置 user agent
      * @var array
      */
-    public static function setUserAgent($userAgent,$ip=false)
+    public static function setUserAgent($userAgent)
     {
         self::$userAgent = trim($userAgent);
     }
