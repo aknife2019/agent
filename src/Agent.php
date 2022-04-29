@@ -20,7 +20,7 @@ class Agent
      * 设置默认语言
      * @var string
      */
-    private static $lang = 'zh_cn';
+    private static $lang = 'zh-CN';
 
     /**
      * 设置header
