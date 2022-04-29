@@ -8,6 +8,12 @@ use Aknife\Agent\Rules\Browser;
 use Aknife\Agent\Rules\Bots;
 use Aknife\Agent\Rules\Device;
 
+// 用于Webkit内核浏览器检测 Windows11
+header('Accept-CH: Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version', true);
+if( $_SERVER['HTTP_SEC_CH_UA_PLATFORM'] == '"Windows"' && strstr(str_replace('"','',$_SERVER['HTTP_SEC_CH_UA_PLATFORM_VERSION']),'.',true) >= 13 ){
+    $_SERVER['HTTP_USER_AGENT'] = str_replace('Win64;','Windows 11; Win64;',$_SERVER['HTTP_USER_AGENT']);
+}
+
 class Agent
 {
     /**
@@ -115,7 +121,7 @@ class Agent
         $accept_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         $language = explode(',',$accept_language);
 
-        return self::resultLang('language',$language[0]);
+        return self::returnLang('language',$language[0]);
     }
 
     /**
@@ -132,7 +138,7 @@ class Agent
             $platform['version'] = '11';
         }
 
-        return $platform['name'] == 'Unknow' ? null : self::resultLang('platform',$platform);
+        return $platform['name'] == 'Unknow' ? null : self::returnLang('platform',$platform);
     }
 
     /**
@@ -154,7 +160,7 @@ class Agent
             $browser['version'] = isset($ver[1]) ? $ver[1] : '';
         }
 
-        return $browser['name'] == 'Unknow' ? null : self::resultLang('browser',$browser);
+        return $browser['name'] == 'Unknow' ? null : self::returnLang('browser',$browser);
 
     }
     
@@ -174,7 +180,7 @@ class Agent
                 'brand' =>  $device['brand'],
                 'category'  =>  $device['category']
             ];
-            return self::resultLang('device',$result);
+            return self::returnLang('device',$result);
         }else{
             return null;
         }
@@ -193,15 +199,63 @@ class Agent
 
         // 如果是搜索蜘蛛，判断真假
         if( $bots['category'] == 'Search Bot' ){
-            $checkResult = self::isSpider($bots['checkMethod'],$bots['rule']) ? 'true' : 'false';
-            $bots['checked'] = self::resultLang('base',$checkResult);
+            $checkResult = self::isRealSpider($bots['checkMethod'],$bots['rule']) ? 'true' : 'false';
+            $bots['checked'] = self::returnLang('base',$checkResult);
 
         }
         
         unset($bots['checkMethod']);
         unset($bots['rule']);
 
-        return $bots['name'] == 'Unknow' ? null : self::resultLang('bots',$bots);
+        return $bots['name'] == 'Unknow' ? null : self::returnLang('bots',$bots);
+    }
+
+    /**
+     * 判断类型是否是手机
+     */
+    public static function isMobile()
+    {
+        // 判断是否是手机APP
+        $browser = self::browser();
+        if( self::returnLangKey('browser',$browser['category']) == 'App' ){
+            return true;
+        }
+
+        // 判断设备是否是智能手机、功能手机
+        $device = self::device();
+        if( in_array(self::returnLangKey('device',$device['category']),['smartphone','feature phone']) ){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 判断是否是手机App
+     */
+    public static function isMobileApp()
+    {
+        // 判断是否是手机APP
+        $browser = self::browser();
+        if( self::returnLangKey('browser',$browser['category']) == 'App' ){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 判断是否是平板
+     */
+    public static function isTablet()
+    {
+        // 判断设备是否是智能手机、功能手机
+        $device = self::device();
+        if( in_array(self::returnLangKey('device',$device['category']),['tablet','phablet']) ){
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -209,7 +263,7 @@ class Agent
      * 需要 nslookup 
      * @var boolean
      */
-    private static function isSpider($method,$rule)
+    private static function isRealSpider($method,$rule)
     {
         $ip = self::$ip;
 
@@ -267,8 +321,6 @@ class Agent
 
         return ip2long($ip) >= $nw+1 && ip2long($ip) <= $bc-1 ? true : false;
     }
-
-
 
     /**
      * 正则匹配
@@ -352,7 +404,7 @@ class Agent
      * 返回对应的语言
      * @var string
      */
-    private static function resultLang($type,$arg)
+    private static function returnLang($type,$arg)
     {
         $langPath = __DIR__."/lang/".self::$lang.'.php';
 
@@ -375,10 +427,38 @@ class Agent
     }
 
     /**
+     * 根据翻译获取key
+     */
+    private static function returnLangKey($type,$value)
+    {
+        if( $value == '' ){
+            return $value;
+        }
+        
+        $langPath = __DIR__."/lang/".self::$lang.'.php';
+
+        // 判断语言文件
+        if( is_file($langPath) ){
+            require $langPath;
+
+            if( isset($lang[$type]) && $lang[$type] && is_array($lang[$type]) ){
+                $searchValue = array_search($value,$lang[$type]);
+
+                return  $searchValue ?: $value;
+            }else{
+                return $value;
+            }
+        }else{
+            return $value;
+        }
+    }
+
+    /**
      * 方法不存在时
      * @var string
      */
-    public function __call($name,$args){
-        echo $name. self::returnLang('Not Found');
+    public static function __callStatic($method, $arguments)
+    {
+        echo $method.' '. self::returnLang('base','Method Not Found');
     }  
 }

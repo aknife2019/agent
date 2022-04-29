@@ -1,20 +1,10 @@
 <?php
 namespace Aknife\Agent\Rules;
 
-// 用于Webkit内核浏览器检测Windows11 与 Windows10
-header('Accept-CH: Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version', true);
-
 class Platform
 {
     // 规则来源于 : https://github.com/matomo-org/device-detector/blob/master/regexes/oss.yml
     public static $rule = [
-        ###############
-        # Device Detector - The Universal Device Detection library for parsing User Agents
-        #
-        # @link https://matomo.org
-        # @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
-        ###############
-
         ##########
         # Bliss OS (https://blissos.org/)
         ##########
@@ -710,6 +700,11 @@ class Platform
         '(?:Windows(?:-Update-Agent)?|Microsoft-(?:CryptoAPI|Delivery-Optimization|WebDAV-MiniRedir|WNS))/(\d+\.\d+)' => [
             'name' => 'Windows',
             'version' => '$1'
+        ],
+
+        'Windows 11' => [
+            'name' => 'Windows',
+            'version' => '11'
         ],
 
         'CYGWIN_NT-10.0|Windows NT 10.0|Windows 10' => [

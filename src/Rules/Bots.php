@@ -9,7 +9,7 @@ class Bots
     public static $rule = [
         // 'Baidu Spider' - 百度搜索
         'baiduspider(-image)?|baidu Transcoder|baidu.*spider' => [
-            'name'=>'Baidu Spider',
+            'name'=>'BaiduSpider',
             'category'=>'Search Bot',
             'checkMethod'=>'domain',
             'rule'=>'baidu.com'
@@ -26,7 +26,7 @@ class Bots
 
         // '360 Spider' - 360搜索
         '360Spider(-Image|-Video)?' => [
-            'name'=>'360 Spider',
+            'name'=>'360Spider',
             'category'=>'Search Bot',
             'checkMethod'=>'ip',
             'rule'=> [
@@ -110,7 +110,7 @@ class Bots
 
         // 'DuckDuckGo Bot'
         'DuckDuck' => [
-            'name'=>'DuckDuckGo Bot',
+            'name'=>'DuckDuckGoBot',
             'category'=>'Search Bot',
             'checkMethod'=>'ip',
             'rule'=>'20.191.45.212|40.88.21.235|40.76.173.151|40.76.163.7|20.185.79.47|52.142.26.175|20.185.79.15|52.142.24.149|40.76.162.208|40.76.163.23|40.76.162.191|40.76.162.247'
@@ -118,7 +118,7 @@ class Bots
 
         // 'Yandex Bot'
         'Yandex(SpravBot|ScreenshotBot|MobileBot|AccessibilityBot|ForDomain|Vertis|Market|Catalog|Calendar|Sitelinks|AdNet|Pagechecker|Webmaster|Media|Video|Bot|Images|Antivirus|Direct|Blogs|Favicons|ImageResizer|Verticals|News|Metrika|\.Gazeta Bot)|YaDirectFetcher|YandexTurbo|YandexTracker|YandexSearchShop|YandexRCA|YandexPartner|YandexOntoDBAPI|YandexOntoDB|YandexMobileScreenShotBot' => [
-            'name'=>'Yandex Bot',
+            'name'=>'YandexBot',
             'category'=>'Search Bot',
             'checkMethod'=>'domain',
             'rule'=>'yandex.ru|yandex.net|yandex.com'
@@ -166,16 +166,16 @@ class Bots
             'category'=>'Feed Fetcher'
         ],
 
+        // 开发工具 
+        '(python-httpx(?:/(\d+[\.\d]+))?|fasthttp(?:/(\d+[\.\d]+))?|geoipupdate(?:/(\d+[\.\d]+))?|PHP-Curl-Class(?:/(\d+[\.\d]+))?|Cpanel-HTTP-Client(?:/(\d+[\.\d]+))?|AnyEvent-HTTP(?:/(\d+[\.\d]+))?|SlimerJS/(\d+[\.\d]+)|Wget(?:/(\d+[\.\d]+))?|Guzzle(?:Http)?(?:/(\d+[\.\d]+))?|(?:lib)?curl(?:/(\d+[\.\d]+))?|python-requests(?:/(\d+[\.\d]+))?|Python-urllib(?:/?(\d+[\.\d]+))?|Apache-HttpClient(?:/?(\d+[\.\d]+))?|Java-http-client(?:/?(\d+[\.\d]+))?|Java(?:/?(\d+[\.\d]+))?|(?:perlclient|libwww-perl)(?:/?(\d+[\.\d]+))?|okhttp/([\d\.]+)|HTTP_Request2(?:/(\d+[\.\d]+))?|HTTP_Request2(?:/(\d+[\.\d]+))?|Mechanize(?:/(\d+[\.\d]+))?|aiohttp(?:/(\d+[\.\d]+))?|Google-HTTP-Java-Client(?:/(\d+[\.\w-]+))?|WWW-Mechanize(?:/(\d+[\.\d]+))?|Faraday(?: v(\d+[\.\d]+))?|(?:Go-http-client|Go )/?(?:(\d+[\.\d]+))?(?: package http)?|urlgrabber(?:/(\d+[\.\d]+))?|libdnf(?:/(\d+[\.\d]+))?|HTTPie(?:/(\d+[\.\d]+))?|rest-client/(\d+[\.\d]+).*ruby|RestSharp/(\d+[\.\d]+)|scalaj-http/(\d+[\.\d]+)|REST::Client/(\d+)|node-fetch/(\d+[\.\d]+)|ReactorNetty/(\d+[\.\d]+)|PostmanRuntime(?:/(\d+[\.\d]+))?|Jakarta Commons-HttpClient/([\.\d]+)|WinHttp.WinHttpRequest.+([\.\d]+)|WinHTTP|Embarcadero URI Client/([\.\d]+)|Mikrotik/([\.\d]+)|GRequests(?:/(\d+[\.\d]+))?|akka-http/([\.\d]+)|aria2(?:/(\d+[\.\d]+))?|BTWebClient/|gvfs/(?:(\d+[\.\d]+))?|uclient-fetch|cpprestsdk/([\.\d]+)|lua-resty-http/([\.\d]+).+ngx_|unirest-java/([\.\d]+)|jsdom/([\.\d]+))' => [
+            'name'=>'$1',
+            'category'=>'libraries',
+        ],
+
         // 通用机器人
-        '(A6-Indexer|nuhk|TsolCrawler|Yammybot|Openbot|Gulper Web Bot|grub-client|Download Demon|SearchExpress|Microsoft URL Control|borg|altavista|dataminr.com|tweetedtimes.com|TrendsmapResolver|teoma|blitzbot|oegp|furlbot|http%20client|polybot|htdig|mogimogi|larbin|scrubby|searchsight|seekbot|semanticdiscovery|snappy|vortex(?!(?: Build|Plus))|zeal|fast-webcrawler|converacrawler|dataparksearch|findlinks|BrowserMob|HttpMonitor|ThumbShotsBot|URL2PNG|ZooShot|GomezA|Google SketchUp|Read%20Later|RackspaceBot|robots|SeopultContentAnalyzer|7Siters|centuryb.o.t9|InterNaetBoten|EasyBib AutoCite|Bidtellect|tomnomnom/meg|My User Agent|cortex|CF-UC User Agent|Re-re Studio|adreview|AHC/|NameOfAgent|Request-Promise|ALittle Client|Hello, world|wp_is_mobile|0xAbyssalDoesntExist|[a-z0-9\-_]*((?<!cu|power[ _]|m[ _])bot(?![ _]TAB|[ _]?5[0-9]|[ _]Senior|[ _]Junior)|crawler|crawl|checker|archiver|transcoder|spider)([^a-z]|$))' => [
+        '(A6-Indexer|nuhk|TsolCrawler|Yammybot|Openbot|Gulper Web Bot|grub-client|Download Demon|SearchExpress|Microsoft URL Control|borg|altavista|dataminr.com|tweetedtimes.com|TrendsmapResolver|teoma|blitzbot|oegp|furlbot|http client|polybot|htdig|mogimogi|larbin|scrubby|searchsight|seekbot|semanticdiscovery|snappy|vortex(?!(?: Build|Plus))|zeal|fast-webcrawler|converacrawler|dataparksearch|findlinks|BrowserMob|HttpMonitor|ThumbShotsBot|URL2PNG|ZooShot|GomezA|Google SketchUp|Read Later|RackspaceBot|robots|SeopultContentAnalyzer|7Siters|centuryb.o.t9|InterNaetBoten|EasyBib AutoCite|Bidtellect|tomnomnom/meg|My User Agent|cortex|CF-UC User Agent|Re-re Studio|adreview|AHC/|NameOfAgent|Request-Promise|ALittle Client|Hello, world|wp_is_mobile|0xAbyssalDoesntExist|[a-z0-9\-_]*((?<!cu|power[ _]|m[ _])bot(?![ _]TAB|[ _]?5[0-9]|[ _]Senior|[ _]Junior)|crawler|crawl|checker|archiver|transcoder|spider)([^a-z]|$))' => [
             'name'=>'$1',
             'category'=>'Generic Bot'
         ],
-        
-        // 开发工具 
-        '(curl|Wget|python-requests|Python-urllib|Java|Guzzle|perlclient|libwww-perl|okhttp|HTTP_Request2|Mechanize|aiohttp|Google-HTTP-Java-Client|WWW-Mechanize|Go-http-client|urlgrabber|libdnf|HTTPie)' => [
-            'name'=>'$1',
-            'category'=>'development',
-        ]
     ];       
 }

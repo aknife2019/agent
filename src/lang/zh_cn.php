@@ -3,7 +3,8 @@
 $lang = [
     'base' => [
         'true'                  =>  '真',
-        'false'                  =>  '假',
+        'false'                 =>  '假',
+        'Method Not Found'      =>  '方法不存在'
     ],
     'platform'=>[
         // 桌面操作系统
@@ -75,20 +76,20 @@ $lang = [
         'Security Checker'      =>  '安全检测',
         'Service Agent'         =>  '服务代理',
         'Feed Fetcher'          =>  'Feed订阅',
+        'libraries'             =>  '开发库',
         'Generic Bot'           =>  '通用Bot',
-        'development'           =>  '开发工具',
 
         // 列表
-        'Baidu Spider'          =>  '百度搜索',
-        'Sogou Spider'          =>  '搜狗搜索',
-        '360 Spider'            =>  '360 搜索',
+        'BaiduSpider'          =>  '百度搜索',
+        'SogouSpider'          =>  '搜狗搜索',
+        '360Spider'            =>  '360 搜索',
         'YisouSpider'           =>  '神马搜索',
         'PetalBot'              =>  '花瓣搜索',
         'Bytespider'            =>  '头条搜索',
         'Googlebot'             =>  '谷歌搜索',
         'BingBot'               =>  '必应搜索',
-        'DuckDuckGo Bot'        =>  'DuckDuckGo搜索',
-        'Yandex Bot'            =>  'Yandex搜索'
+        'DuckDuckGoBot'        =>  'DuckDuckGo搜索',
+        'YandexBot'            =>  'Yandex搜索'
     ],
 
     'browser'=>[

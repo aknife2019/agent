@@ -1,6 +1,6 @@
 Agent
 =====
-规则更新于 2022-04-28
+规则更新于 2022年4月28日
 
 安装
 ------------
@@ -83,6 +83,14 @@ Agent::device();    //  ['model'=>'honor V10','brand'=>'Huawei','category'=>'sma
 Agent::robot(); // ['name'=>'Baidu Spider','category'=>'Search bot','checked'=>'false']
 ```
 
+### 其他用法
+```php
+
+Agent::isMobile();
+Agent::isMobileApp();
+Agent::isTablet();
+
+```
 
 ## License
 
