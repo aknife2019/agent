@@ -108,7 +108,25 @@ class Agent
         }else{
             $ip = $ipAddress;
         }
+        
         $result = IpLocation::find($ip);
+
+        return $result;
+    }
+
+    /**
+     * 获取ip所属国家
+     */
+    public static function country( $ipAddress = '')
+    {
+        if( $ipAddress == '' ){
+            $ip = self::$ip ?: $_SERVER['REMOTE_ADDR'];
+            self::$ip = $ip;
+        }else{
+            $ip = $ipAddress;
+        }
+        
+        $result = IpLocation::country($ip);
 
         return $result;
     }
