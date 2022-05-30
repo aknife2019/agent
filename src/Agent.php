@@ -1,7 +1,7 @@
 <?php
 namespace Aknife\Agent;
 
-use Aknife\Ip\IpLocation;
+use Aknife\Ip\IpInfo;
 
 use Aknife\Agent\Rules\Platform;
 use Aknife\Agent\Rules\Browser;
@@ -109,26 +109,9 @@ class Agent
             $ip = $ipAddress;
         }
         
-        $result = IpLocation::find($ip);
+        $result = IpInfo::find($ip);
 
-        return $result;
-    }
-
-    /**
-     * 获取ip所属国家
-     */
-    public static function country( $ipAddress = '')
-    {
-        if( $ipAddress == '' ){
-            $ip = self::$ip ?: $_SERVER['REMOTE_ADDR'];
-            self::$ip = $ip;
-        }else{
-            $ip = $ipAddress;
-        }
-        
-        $result = IpLocation::country($ip);
-
-        return $result;
+        return array_merge(['ip'=>$ip],$result);
     }
 
     /**
@@ -219,7 +202,15 @@ class Agent
         if( $bots['category'] == 'Search Bot' ){
             $checkResult = self::isRealSpider($bots['checkMethod'],$bots['rule']) ? 'true' : 'false';
             $bots['checked'] = self::returnLang('base',$checkResult);
-
+        }else{
+            // 判断ip蜘蛛规则
+            foreach( Bots::$ipRule as $key=>$val ){
+                if( self::checkIpAddr( self::$ip, $key) ){
+                    $bots = $val;
+                    $bots['checked'] = self::returnLang('base',$bots['checked']);
+                    break;
+                }
+            }
         }
         
         unset($bots['checkMethod']);
@@ -316,28 +307,33 @@ class Agent
             }
         }
         
-
         return $dns;
     }
 
     // 解析IP段
-    public static function checkIpAddr($ip,$ipAddr) {
-        $arr = explode('/',$ipAddr);//对IP段进行解剖
-        $ip_addr = $arr[0];//得到IP地址
-        $netbits = intval($arr[1]);//得到掩码位
-        $subnet_mask = long2ip(ip2long("255.255.255.255") << (32 - $netbits));
-        $ip_lang = ip2long($ip_addr);
-        $nm = ip2long($subnet_mask);
-        $nw = ($ip_lang & $nm);
-        $bc = $nw | (~$nm);
+    private static function checkIpAddr($ip,$cidr) {
+        if( $ip === $cidr ){
+            return true;
+        }
 
-        $ips['ip_start'] = long2ip($nw + 1);//可用IP开始
-        $ips['ip_end'] = long2ip($bc - 1);//可用IP结束
-
-        if($bc <= 0) $bc += 4294967296;//修复32位服务器和64位服务的差别
-        if($nw <= 0) $nw += 4294967296;//32位long2ip后会出现负数
-
-        return ip2long($ip) >= $nw+1 && ip2long($ip) <= $bc-1 ? true : false;
+        list($net, $maskBits) = explode('/', $cidr);
+        $size = (strpos($ip, ':') === false) ? 4 : 16;
+        
+        $ip = inet_pton($ip);
+        $net = inet_pton($net);
+      
+        // Build mask
+        $solid = floor($maskBits / 8);
+        $solidBits = $solid * 8;
+        $mask = str_repeat(chr(255), $solid);
+        for ($i = $solidBits; $i < $maskBits; $i += 8) {
+            $bits = max(0, min(8, $maskBits - $i));
+            $mask .= chr((pow(2, $bits) - 1) << (8 - $bits));
+        }
+        $mask = str_pad($mask, $size, chr(0));
+        
+        // Compare the mask
+        return ($ip & $mask) === ($net & $mask);
     }
 
     /**

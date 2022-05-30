@@ -35,13 +35,21 @@ Agent::setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_3 like Mac OS X; zh
 ### 解析特定的 IP
 
 ```php
-Agent::setIp('8.8.8.8');
-
-Agent::ip(); // ['ip' => '182.240.131.220','country' => '中国','province' => '云南省','city' => '玉溪市','isp' => '中国电信']
-
-Agent::ip('8.8.8.8'); // ['ip' => '8.8.8.8','country' => '美国','province' => '','city' => '','isp' => '加利福尼亚州圣克拉拉县山景市谷歌公司DNS服务器']
-Agent::ip('159.75.190.197'); // ['ip' => '159.75.190.197','country' => '中国','province' => '广东省','city' => '广州市','isp' => '腾讯云']
-Agent::ip('2402:4e00:40:40::2:331');// ['ip' => '2402:4e00:40:40::2:331','country' => '中国','province' => '广东省','city' => '深圳市','isp' => '深圳市腾讯计算机系统有限公司']
+Agent::ip('159.75.190.197');
+/*
+[
+    'continent' => [
+            'code' => 'AS',
+            'name' => '亚洲',
+    ],
+    'country' => [
+            'code' => 'CN',
+            'name' => '中国',
+    ],
+    'region' => '广东省',
+    'city' => '广州市',
+]
+*/
 ```
 
 ### 浏览器的语言
@@ -85,11 +93,10 @@ Agent::robot(); // ['name'=>'Baidu Spider','category'=>'Search bot','checked'=>'
 
 ### 其他用法
 ```php
-
+Agent::setIp('8.8.8.8');
 Agent::isMobile();
 Agent::isMobileApp();
 Agent::isTablet();
-
 ```
 
 ## License

@@ -3,6 +3,10 @@ namespace Aknife\Agent\Rules;
 
 class Bots
 {
+    public static $ipRule = [
+        '35.185.241.0/24'   =>  ['name'=>'谷歌快照','category'=>'Search Bot','checked'=>'true'],
+    ];
+
     // 规则来源 -- https://github.com/matomo-org/device-detector/blob/master/regexes/bots.yml
     // 未采用上述规则，只收录了部分热门搜索引擎,欢迎提交补充
     // 当然主要原因还是我只需要这部分搜索...
